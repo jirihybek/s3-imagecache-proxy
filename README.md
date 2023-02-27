@@ -11,6 +11,44 @@ When developing internal software services you often need to resize images and p
 - Image proxy that supports resizing.
 - Optional caching to provide speed (mostly with resized images).
 
+## TL;DR
+
+```bash
+npm run install
+
+LOG_LEVEL=debug \
+PORT=3000 \
+URL_SIGNATURE_KEY="test" \
+AWS_ACCESS_KEY_ID="minio" \
+AWS_SECRET_ACCESS_KEY="miniominio" \
+AWS_ENDPOINT="http://localhost:9000" \
+AWS_FORCE_PATH_STYLE=true \
+AWS_S3_BUCKET="test" \
+npm run start
+
+curl -X GET "http://localhost:3000/image/shm:64cc9f06dab1de47f7741e37c15ad2971785ddb527bdf50186517e73df5d5300/jpeg+w:300+h:300+cover+center/my/image.png" > my_image.png
+```
+
+**- or with Docker -**
+
+```bash
+docker build -t s3-imagecache-proxy:latest . && docker run \
+    -e "LOG_LEVEL=debug" \
+    -e "PORT=3000" \
+    -e "CACHE_DIR=/cache" \
+    -e "URL_SIGNATURE_KEY=test" \
+    -e "AWS_ACCESS_KEY_ID=<access_key>" \
+    -e "AWS_SECRET_ACCESS_KEY=<secret_key>" \
+    -e "AWS_ENDPOINT=http://localhost:9000" \
+    -e "AWS_FORCE_PATH_STYLE=true" \
+    -e "AWS_S3_BUCKET=test" \
+    -v "$(pwd)/data/cache:/cache" \
+    -p "3000:3000" \
+    s3-imagecache-proxy:latest
+
+curl -X GET "http://localhost:3000/image/shm:64cc9f06dab1de47f7741e37c15ad2971785ddb527bdf50186517e73df5d5300/jpeg+w:300+h:300+cover+center/my/image.png" > my_image.png
+```
+
 ## Usage
 
 The service exposes the following endpoints:

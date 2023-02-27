@@ -1,21 +1,19 @@
-services:
-  - docker:dind
-
 stages:
   - build
 
 variables:
   IMAGE_NAME_BASE: ${CI_REGISTRY}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}
   IMAGE_TAG: v${CI_COMMIT_SHORT_SHA}-${CI_COMMIT_REF_SLUG}
+  DOCKER_HOST: tcp://docker:2375
 
 build-image:
   stage: build
   only:
     refs:
       - main
-  image:
-    name: docker:latest
-    entrypoint: [""]
+  image: docker:latest
+  services:
+    - docker:dind
 
   before_script:
     - echo "Building ${IMAGE_NAME_BASE}:${IMAGE_TAG}"

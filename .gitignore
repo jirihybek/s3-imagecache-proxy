@@ -1,0 +1,7 @@
+/node_modules
+/dist
+/data/cache/*
+!/data/cache/.gitkeep
+/deployment/data
+/dev.env
+.DS_Store

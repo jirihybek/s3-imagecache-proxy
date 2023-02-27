@@ -1,0 +1,43 @@
+version: '3.4'
+services:
+  # Minio
+  minio:
+    image: minio/minio:RELEASE.2023-02-22T18-23-45Z
+    restart: unless-stopped
+    volumes:
+      - ./data/minio:/data
+    expose:
+      - "9000"
+      - "9001"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: "minio"
+      MINIO_ROOT_PASSWORD: "miniominio"
+      MINIO_SERVER_URL: "http://localhost:9000"
+      MINIO_BROWSER_REDIRECT_URL: "http://localhost:9001" # url for minio console
+    command: 'server --console-address ":9001" /data'
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+  # S3 Image-Cache Proxy
+  s3-imagecache-proxy:
+    image: s3-imagecache-proxy:latest
+    restart: unless-stopped
+    volumes:
+      - "./data/proxy-cache:/cache"
+    ports:
+      - "3000:3000"
+    environment:
+      LOG_LEVEL: debug
+      PORT: "3000"
+      CACHE_DIR: /cache
+      URL_SIGNATURE_KEY: test
+      AWS_ACCESS_KEY_ID: "minio"
+      AWS_SECRET_ACCESS_KEY: "miniominio"
+      AWS_ENDPOINT: "http://minio:9000"
+      AWS_FORCE_PATH_STYLE: "true"
+      AWS_S3_BUCKET: "test"

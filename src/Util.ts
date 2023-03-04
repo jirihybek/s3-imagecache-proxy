@@ -83,6 +83,10 @@ export function readFileOptions(options: Record<string, string>): TFileOptions {
         res.mimeType = options["m"];
     }
 
+    if (options["af"]) {
+        res.attachmentFilename = options["af"];
+    }
+
     return res;
 }
 
@@ -138,6 +142,11 @@ export function readImageOptions(options: Record<string, string>): TImageOptions
         }
     }
 
+    // Auto rotate
+    if (options["ar"]) {
+        res.autoRotate = true;
+    }
+
     return res;
 }
 
@@ -163,6 +172,10 @@ export function imageOptionsToLabels(options: TImageOptions): string[] {
 
     if (options.format) {
         res.push(`f_${options.format}`);
+    }
+
+    if (options.autoRotate) {
+        res.push(`ar`);
     }
 
     return res;

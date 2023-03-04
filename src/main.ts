@@ -140,6 +140,10 @@ app.get("/file/:signature/:options/:objectPath(*)", parseMiddleware("File", read
                 if (options.mimeType) {
                     res.header("Content-Type", options.mimeType);
                 }
+
+                if (options.attachmentFilename) {
+                    res.header("Content-Disposition", `attachment; filename="${options.attachmentFilename}"`);
+                }
     
                 res.header("ETag", cacheResult.etag);
                 cacheResult.stream.pipe(res);
@@ -170,6 +174,10 @@ app.get("/file/:signature/:options/:objectPath(*)", parseMiddleware("File", read
 
         if (options.mimeType) {
             res.header("Content-Type", options.mimeType);
+        }
+
+        if (options.attachmentFilename) {
+            res.header("Content-Disposition", `attachment; filename="${options.attachmentFilename}"`);
         }
 
         s3Stream.pipe(res);
@@ -238,6 +246,10 @@ app.get("/image/:signature/:options/:objectPath(*)", parseMiddleware("Image", re
                 background: { r:0, g:0, b:0, alpha: 0.0 },
                 position: sharp.gravity.center
             });
+        }
+
+        if (options.autoRotate) {
+            image = image.rotate();
         }
 
         switch(options.format) {

@@ -115,6 +115,7 @@ key1:value1+key2:value2+key3+key4
 - `raw` - Raw format option - required.
 - `m:<string>` - Specify mime-type returned in the HTTP header. Optional.
 - `nc` - No cache - do not cache the file, always get it from S3. Optional.
+- `af` - Attachment filename - respond with `Content-Disposition: attachment; filename="..."` header to force file download. Optional.
 
 **Examples:**
 
@@ -162,6 +163,10 @@ GET /file/:signature/raw+m:application%2Fpdf/my/dir/file
 - `w:<number>` - Image width in pixels.
 - `h:<number>` - Image height in pixels.
 
+**Rotation options:**
+
+- `ar` - Auto rotate - rotate the image based on the EXIF Orientation tag. Optional.
+
 **Examples:**
 
 ```
@@ -207,6 +212,8 @@ npm run start
 To run locally while loading config from an env file:
 
 ```bash
+npm run build
+# or "npm run build:w" in a separate terminal
 export $(cat ./dev.env | xargs) && npm run start
 ```
 

@@ -21,6 +21,7 @@ export interface TCacheResult {
 export interface TFileOptions {
     noCache?: boolean;
     mimeType?: string;
+    attachmentFilename?: string;
 }
 
 /**
@@ -37,6 +38,7 @@ export interface TImageOptions {
     fit: "cover" | "contain" | "fill" | "inside" | "outside";
     position: "top" | "right top" | "right" | "right bottom" | "bottom" | "left bottom" | "left" | "left top" | "center" | "entropy" | "attention";
     format: TImageFormat;
+    autoRotate?: boolean;
 }
 
 /**

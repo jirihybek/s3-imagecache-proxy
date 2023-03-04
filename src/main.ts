@@ -4,7 +4,7 @@
  * @license Apache-2.0 See the LICENSE file for details.
  */
 
-import express from "express";
+import express, { Request, Response } from "express";
 import { default as logger, LOG_LEVEL_NAME_MAP, parseLogLevel } from "meta2-logger";
 import { cleanEnv, str, num, bool } from "envalid"
 import { S3Client, GetObjectCommand, _Error } from "@aws-sdk/client-s3";
@@ -288,4 +288,15 @@ app.get("/image/:signature/:options/:objectPath(*)", parseMiddleware("Image", re
 // Start server
 app.listen(config.PORT, () => {
     logger.info("Server started and listening on port %d", config.PORT)
+});
+
+// Not found handler
+app.use((_req, res, _next) => {
+    res.end("Not found.");
+});
+
+// All errors handler
+app.use((err: unknown, _req: Request, res: Response, _next: unknown) => {
+    logger.error("Error while processing request:", err);
+    res.end("Internal server error");
 });

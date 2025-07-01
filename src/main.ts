@@ -33,7 +33,8 @@ const config = cleanEnv(process.env, {
     AWS_ENDPOINT: str({ default: "[none]" }),
     AWS_FORCE_PATH_STYLE: bool({ default: false }),
     AWS_S3_BUCKET: str(),
-    URL_SIGNATURE_KEY: str()
+    URL_SIGNATURE_KEY: str(),
+    CORS_ALLOW_ORIGIN: str({ default: '*' }),
 });
 
 console.log("Initializing service with configuration:", {
@@ -121,6 +122,20 @@ function parseMiddleware<TOpts>(opType: string, readOptionsFn: (opts: Record<str
 
 // Create express app
 const app = express();
+
+// Allow CORS
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', config.CORS_ALLOW_ORIGIN);
+    res.header('Access-Control-Allow-Methods', '*');
+    res.header('Access-Control-Allow-Headers', '*');
+
+    // Handle preflight OPTIONS requests
+    if (req.method === 'OPTIONS') {
+        res.sendStatus(200);
+    } else {
+        next();
+    }
+});
 
 app.get("/file/:signature/:options/:objectPath(*)", parseMiddleware("File", readFileOptions), async (req, res) => {
     const { options, objectPath } = req as TParsedRequest<TFileOptions>;
